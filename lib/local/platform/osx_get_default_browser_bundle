@@ -1,0 +1,17 @@
+#!/usr/bin/osascript
+
+tell (system attribute "sysv") to set MacOS_version to it mod 4096 div 16
+if MacOS_version is 5 then
+    set {a1, a2} to {1, 2}
+else
+    set {a1, a2} to {2, 1}
+end if
+set pListpath to (path to preferences as Unicode text) & "com.apple.LaunchServices.plist"
+tell application "System Events"
+    repeat with i in property list items of property list item 1 of contents of property list file pListpath
+        if value of property list item a2 of i is "http" then
+            return value of property list item a1 of i
+        end if
+    end repeat
+    return "com.apple.Safari"
+end tell

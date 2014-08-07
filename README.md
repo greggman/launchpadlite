@@ -1,112 +1,54 @@
-# Launchpad
+# LaunchpadLite
 
 You can launch browsers! With NodeJS!
 
 * __Local browsers__ for MacOS, Windows and Linux (like) operating systems
-* __[BrowserStack](http://browserstack.com)__ browsers using the BrowserStack API
-* __Remote browsers__ using the launchpad server
+
+This is a fork of <a href="https://github.com/ekryski/launchpad">Launchpad</a>
+paired down just for my needs.
+
+# Rational
+
+I only need to launch a browser for the user to view a page, not for testing. I didn't want to
+start from scratch beceause I knew there's likely lots of little issues I'm not
+aware of.
+
+But, that also means much of the functionality of the original launchpad was stuff
+I didn't need.
+
+I found a few issues. It didn't work in my XP. The code expected `LOCALAPPDATA` but for
+whatever reason on my XP there's only `APPDATA`. It also didn't work on my Windows 8.1. I don't
+know what the issue was but removing the version checking code fixed that. ShowVer.exe which
+they included runs on Windows 8.1 but I didn't need any version info so I just ripped that out.
+
+I removed all the code related to checking for the browser already running.
+
+I also needed the option to launch the user's default browser so I added that it. It's identified
+as "default".
+
+It's down from 43k lines of dependencies to 3.7k lines of which 3k are the *underscore* and *q* npm modules.
 
 ## API
 
-The general API for any launcher (`<type>`) looks like this:
-
     var launch = require('launchpad');
-    launch.<type>(configuration, function(error, launcher) {
+    var optionsPassedToChildProcessSpawn = {
+      detach: true, // If you want to be able to exit node without killing the browser.
+    };
+
+    launch.local(optionsPassedToChildProcessSpawn, function(error, launcher) {
       launcher.browsers(function(error, browsers) {
-        // -> List of available browsers with version
+        // -> List of available browsers
+        browsers.forEach(function(browser) {
+          console.log(browser.name);
+        });
       });
 
-      launcher(url, configuration, function(error, instance) {
-        instance // -> A browser instance
+      launcher[<browsername>](url, function(error, instance) {
         instance.id // -> unique instance id
         instance.stop(callback) // -> Stop the instance
         instance.status(callback) // -> Get status information about the instance
       });
-
-      launcher.<browsername>(url, function(error, instance) {
-        // Same as above
-      });
     });
 
-## Local launchers
 
-Local launchers look up all currently installed browsers and allow you to start new browser processes.
 
-    // Launch a local browser
-    launch.local(function(err, local) {
-      launcher.browsers(function(error, browsers) {
-        // -> List of all browsers found locally with version
-      });
-      
-      local.firefox('http://url', function(err, instance) {
-        // An instance is an event emitter
-        instance.on('stop', function() {
-          console.log('Terminated local firefox');
-        });
-      });
-    });
-
-## Browserstack
-
-BrowserStack is a great cross-browser testing tool and offers API access to any account that is on a monthly plan.
-Launchpad allows you to start BrowserStack workers through its API like this:
-
-    launch.browserstack({
-        username : 'user',
-        password : 'password'
-      },
-      function(err, browserstack) {
-        launcher.browsers(function(error, browsers) {
-          // -> List of all Browserstack browsers
-        });
-        
-        browserstack.ie('http://url', function(err, instance) {
-          // Shut the instance down after 5 seconds
-          setTimeout(function() {
-            instance.stop();
-          }, 5000);
-      });
-    });
-
-Behind the scenes we have the [node-browserstack](https://github.com/scottgonzalez/node-browserstack)
-module do all the work (API calls) for us.
-
-## Remote systems
-
-Launchpad also allows you to start browsers on other systems that are running the Launchpad server.
-
-### The launchpad server
-
-The launchpad server is a simple implementation of the [BrowserStack API (Version 1)](https://github.com/browserstack/api)
-which provides a RESTful interface to start and stop browsers. You can set up a Launchpad server like this:
-
-    launch.server({
-      username : 'launcher',
-      password : 'testing'
-    }).listen(8080, function () {
-      console.log('Listeining...');
-    });
-
-### Launching remote servers
-
-Because the Launchpad server is compatible with the BrowserStack API (Version 1), you could basically use
-any BrowserStack API client, connect to the server and start browsers.
-
-The included remote launcher does exactly that by wrapping BrowserStack launcher and pointing it to
-the given host:
-
-    launch.remote({
-      host : 'ie7machine',
-      username : 'launcher',
-      password : 'testing'
-    }, function(err, api) {
-      launcher.browsers(function(error, browsers) {
-        // -> List of all browsers found on ie7machine
-      });
-      
-      api('http://github.com', {
-        browser : 'safari',
-        version : 'latest'
-      }, function(err, instance) {
-      });
-    });
