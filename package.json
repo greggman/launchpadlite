@@ -35,8 +35,6 @@
     "chrome",
     "ie",
     "firefox",
-    "opera",
-    "phantomjs",
-    "browserstack"
+    "opera"
   ]
 }
