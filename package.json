@@ -2,7 +2,7 @@
   "name": "launchpadlite",
   "description": "You can launch browsers! From NodeJS!",
   "version": "0.3.3",
-  "homepage": "https://github.com/greggman/inmemfilecache",
+  "homepage": "https://github.com/greggman/launchpadlite",
   "author": {
     "name": "Gregg Tavares",
     "email": "github@greggman.com"
@@ -19,11 +19,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/greggman/inmemfilecache.git"
+    "url": "https://github.com/greggman/launchpadlite.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/greggman/inmemfilecache/issues"
+    "url": "https://github.com/greggman/launchpadlite/issues"
   },
   "main": "lib/index.js",
   "devDependencies": {},
