@@ -30,7 +30,7 @@ It's down from 43k lines of dependencies to 3.7k lines of which 3k are the *unde
 
 ## API
 
-    var launch = require('launchpad');
+    var launch = require('launchpadlite');
     var optionsPassedToChildProcessSpawn = {
       detach: true, // If you want to be able to exit node without killing the browser.
     };
